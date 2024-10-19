@@ -4,17 +4,71 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 import pandas as pd
 from pymongo import MongoClient
-from urllib.parse import quote_plus
 import bcrypt
-import certifi
-import ssl
+import time  # Import time for simulating loading
+
+# Updated theme with cooler tones of white
+st.markdown(
+    """
+    <style>
+    /* Apply white background to the main body */
+    body {
+        background-color: #ffffff;
+        color: #2c3e50;
+    }
+
+    /* Set white background and dark text for the Streamlit app */
+    .stApp {
+        background-color: #ffffff;
+        color: #2c3e50;
+    }
+
+    /* Customize buttons with a light cool tone */
+    .stButton>button {
+        background-color: #bdc3c7;  /* Light cool tone */
+        color: #2c3e50;
+    }
+
+    /* Change the color of text inputs */
+    .stTextInput>div>input {
+        background-color: #ecf0f1;  /* Light gray background */
+        color: #2c3e50;
+    }
+
+    /* Style selectbox */
+    .stSelectbox>div>div>input {
+        background-color: #ecf0f1;
+        color: #2c3e50;
+    }
+
+    /* Change file uploader background and text color */
+    .stFileUploader>div {
+        background-color: #ecf0f1;
+        color: #2c3e50;
+    }
+
+    /* Customize the progress bar with a cool white tone */
+    .stProgress>div>div {
+        background-color: #d5dbdb;  /* Very light cool tone */
+    }
+
+    /* Style the success message background with a cool white tone */
+    .stAlert {
+        background-color: #d5dbdb;  /* Very light gray */
+        color: #2c3e50;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Connect to MongoDB
 client = MongoClient("mongodb+srv://Mandar_Wagh:mandar%401107@ecg-users.i4kje.mongodb.net/?retryWrites=true&w=majority")
 db = client.ecg_users
 users_collection = db.users
 
-# Define helper functions for user registration and authentication
+# Helper functions
 def register_user(username, password):
     if users_collection.find_one({"username": username}):
         return False  # Username already exists
@@ -28,7 +82,6 @@ def authenticate_user(username, password):
         return True
     return False
 
-
 # Load your RNN model
 RNN_model = load_model('RNN_model_updated.keras')
 
@@ -38,7 +91,7 @@ if 'logged_in' not in st.session_state:
 
 def login_page():
     if not st.session_state['logged_in']:
-        st.title("ECG Classification with RNN Model")
+        st.title("ECG Classifiers")
 
         choice = st.selectbox('Login or Register', ['Login', 'Register'])
 
@@ -67,7 +120,7 @@ def login_page():
 
 def ecg_classification_page():
     st.subheader(f"Welcome, {st.session_state['username']}!")
-    
+
     # Input Section
     st.write("Input your ECG data for classification:")
 
@@ -89,7 +142,6 @@ def ecg_classification_page():
                 input_data = data.values.flatten()
 
             elif data.shape[0] == 1 and data.shape[1] == 1:
-                # Single cell containing comma-separated values
                 input_data = data.iloc[0, 0].split(',')
                 input_data = list(map(float, input_data))
 
@@ -106,33 +158,32 @@ def ecg_classification_page():
                     input_data = None
 
                 if input_data is not None:
-                    # Display the first few values for verification
                     st.write(f"First 5 values: {input_data[:5]}")
 
-                    # Preprocess the input data
-                    try:
-                        # Convert the input data to float
-                        input_data = np.array(input_data, dtype=float)
+                    # Simulate a loading process with fixed speed of 5 seconds (0.05 seconds per step)
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
 
-                        # Normalize input data
-                        input_data_normalized = input_data / np.max(np.abs(input_data))
-                        input_data_reshaped = input_data_normalized.reshape(1, 187, 1)  # RNN expects (batch_size, time_steps, features)
+                    for percent_complete in range(100):
+                        time.sleep(0.05)  # 5 seconds total (0.05 * 100)
+                        progress_bar.progress(percent_complete + 1)
+                        status_text.text(f"Processing... {percent_complete + 1}% complete")
 
-                        # Predict with the RNN model
-                        rnn_probs = RNN_model.predict(input_data_reshaped)
-                        predicted_class = np.argmax(rnn_probs, axis=1)[0]
+                    # After loading is completed, perform the prediction
+                    # Normalize input data
+                    input_data = np.array(input_data, dtype=float)
+                    input_data_normalized = input_data / np.max(np.abs(input_data))
+                    input_data_reshaped = input_data_normalized.reshape(1, 187, 1)
 
-                        st.success(f"Predicted class: {predicted_class}")
+                    # Predict with the RNN model
+                    rnn_probs = RNN_model.predict(input_data_reshaped)
+                    predicted_class = np.argmax(rnn_probs, axis=1)[0]
 
-                    except ValueError:
-                        st.error("Error processing the numeric values. Ensure the data is in the correct format.")
-            else:
-                st.error("No valid ECG data found in the uploaded file.")
+                    # Show predicted class only after progress is fully completed
+                    st.success(f"Predicted class: {predicted_class}")
+
         except Exception as e:
             st.error(f"Error reading the file: {e}")
-
-    else:
-        st.write("Please upload a CSV file with exactly 187 comma-separated ECG values.")
 
 # Run the login page
 login_page()

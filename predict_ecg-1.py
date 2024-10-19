@@ -5,65 +5,9 @@ from tensorflow.keras.models import load_model
 import pandas as pd
 from pymongo import MongoClient
 import bcrypt
-import time  # Import time for simulating loading
+import time
 
-# Updated theme with cooler tones of white
-st.markdown(
-    """
-    <style>
-    /* Apply white background to the main body */
-    body {
-        background-color: #ffffff;
-        color: #2c3e50;
-    }
-
-    /* Set white background and dark text for the Streamlit app */
-    .stApp {
-        background-color: #ffffff;
-        color: #2c3e50;
-    }
-
-    /* Customize buttons with a light cool tone */
-    .stButton>button {
-        background-color: #bdc3c7;  /* Light cool tone */
-        color: #2c3e50;
-    }
-
-    /* Change the color of text inputs */
-    .stTextInput>div>input {
-        background-color: #ecf0f1;  /* Light gray background */
-        color: #2c3e50;
-    }
-
-    /* Style selectbox */
-    .stSelectbox>div>div>input {
-        background-color: #ecf0f1;
-        color: #2c3e50;
-    }
-
-    /* Change file uploader background and text color */
-    .stFileUploader>div {
-        background-color: #ecf0f1;
-        color: #2c3e50;
-    }
-
-    /* Customize the progress bar with a cool white tone */
-    .stProgress>div>div {
-        background-color: #d5dbdb;  /* Very light cool tone */
-    }
-
-    /* Style the success message background with a cool white tone */
-    .stAlert {
-        background-color: #d5dbdb;  /* Very light gray */
-        color: #2c3e50;
-    }
-
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# Connect to MongoDB
+# Connect to MongoDB (assuming credentials are correct)
 client = MongoClient("mongodb+srv://Mandar_Wagh:mandar%401107@ecg-users.i4kje.mongodb.net/?retryWrites=true&w=majority")
 db = client.ecg_users
 users_collection = db.users
@@ -169,7 +113,6 @@ def ecg_classification_page():
                         progress_bar.progress(percent_complete + 1)
                         status_text.text(f"Processing... {percent_complete + 1}% complete")
 
-                    # After loading is completed, perform the prediction
                     # Normalize input data
                     input_data = np.array(input_data, dtype=float)
                     input_data_normalized = input_data / np.max(np.abs(input_data))
@@ -181,6 +124,43 @@ def ecg_classification_page():
 
                     # Show predicted class only after progress is fully completed
                     st.success(f"Predicted class: {predicted_class}")
+
+                    # Display 5 classes and highlight predicted one using buttons
+                    st.write("Classification Results:")
+
+                    classes = [
+                        "Class 0: Normal:The heart beats in a normal rhythm without arrhythmias.", 
+                        "Class 1: Supraventricular:Abnormal fast rhythms originating above the heart’s ventricles.", 
+                        "Class 2: Ventricular:Irregular heartbeats that start in the lower chambers of the heart (ventricles)", 
+                        "Class 3: Fusion Beat :A fusion of two heartbeats, one from normal rhythm and one from an ectopic source.",
+                        "Class 4: Unclassifiable Beats:Beats that cannot be classified into the known categories."  # Updated class name
+                    ]
+                    descriptions = [
+                        "Normal beat detected.",
+                        "Supraventricular Arrhythmia detected.",
+                        "Ventricular Arrhythmia detected.",
+                        "Fusion Beat detected.",
+                        "Unclassifiable beat detected."
+                    ]
+
+                    cols = st.columns(5)
+
+                    for i, col in enumerate(cols):
+                        # Add hover effect using markdown
+                        if i == predicted_class:
+                            col.markdown(f"""
+                                <button style='padding: 10px; width: 100%; background-color: lightgreen; 
+                                border-radius: 5px; cursor: pointer;' title='{descriptions[i]}'>
+                                {classes[i]}
+                                </button>
+                                """, unsafe_allow_html=True)
+                        else:
+                            col.markdown(f"""
+                                <button style='padding: 10px; width: 100%; background-color: #FAF9F6; 
+                                border-radius: 5px; cursor: pointer;' title='{descriptions[i]}'>
+                                {classes[i]}
+                                </button>
+                                """, unsafe_allow_html=True)
 
         except Exception as e:
             st.error(f"Error reading the file: {e}")

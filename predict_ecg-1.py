@@ -8,60 +8,56 @@ import bcrypt
 import time  # Import time for simulating loading
 
 # Updated theme with cooler tones of white
-st.markdown(
-    """
+st.markdown("""
     <style>
-    /* Apply white background to the main body */
+    /* Apply black background to the main body */
     body {
-        background-color: #ffffff;
-        color: #2c3e50;
+        background-color: #000000;
+        color: #ecf0f1;  /* Light text color */
     }
 
-    /* Set white background and dark text for the Streamlit app */
+    /* Set black background and light text for the Streamlit app */
     .stApp {
-        background-color: #ffffff;
-        color: #2c3e50;
+        background-color: #000000;
+        color: #ecf0f1;
     }
 
-    /* Customize buttons with a light cool tone */
+    /* Customize buttons with a dark tone */
     .stButton>button {
-        background-color: #bdc3c7;  /* Light cool tone */
-        color: #2c3e50;
+        background-color: #2c3e50;  /* Dark tone */
+        color: #ecf0f1;
     }
 
     /* Change the color of text inputs */
     .stTextInput>div>input {
-        background-color: #ecf0f1;  /* Light gray background */
-        color: #2c3e50;
+        background-color: #2c3e50;  /* Dark background for inputs */
+        color: #ecf0f1;
     }
 
     /* Style selectbox */
     .stSelectbox>div>div>input {
-        background-color: #ecf0f1;
-        color: #2c3e50;
+        background-color: #2c3e50;
+        color: #ecf0f1;
     }
 
     /* Change file uploader background and text color */
     .stFileUploader>div {
-        background-color: #ecf0f1;
-        color: #2c3e50;
+        background-color: #2c3e50;
+        color: #ecf0f1;
     }
 
-    /* Customize the progress bar with a cool white tone */
+    /* Customize the progress bar */
     .stProgress>div>div {
-        background-color: #d5dbdb;  /* Very light cool tone */
+        background-color: #34495e;  /* Dark tone */
     }
 
-    /* Style the success message background with a cool white tone */
+    /* Style the success message background */
     .stAlert {
-        background-color: #d5dbdb;  /* Very light gray */
-        color: #2c3e50;
+        background-color: #34495e;  /* Dark gray */
+        color: #ecf0f1;
     }
-
     </style>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
 # Connect to MongoDB
 client = MongoClient("mongodb+srv://Mandar_Wagh:mandar%401107@ecg-users.i4kje.mongodb.net/?retryWrites=true&w=majority")

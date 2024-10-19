@@ -91,7 +91,7 @@ if 'logged_in' not in st.session_state:
 
 def login_page():
     if not st.session_state['logged_in']:
-        st.title("ECG Classifier")
+        st.title("ECG Classifiers")
 
         choice = st.selectbox('Login or Register', ['Login', 'Register'])
 

@@ -5,9 +5,7 @@ from tensorflow.keras.models import load_model
 import pandas as pd
 from pymongo import MongoClient
 import bcrypt
-import time
 
-# Connect to MongoDB (assuming credentials are correct)
 client = MongoClient("mongodb+srv://Mandar_Wagh:mandar%401107@ecg-users.i4kje.mongodb.net/?retryWrites=true&w=majority")
 db = client.ecg_users
 users_collection = db.users

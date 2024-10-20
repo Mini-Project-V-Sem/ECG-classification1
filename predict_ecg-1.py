@@ -125,42 +125,73 @@ def ecg_classification_page():
                     # Show predicted class only after progress is fully completed
                     st.success(f"Predicted class: {predicted_class}")
 
-                    # Display 5 classes and highlight predicted one using buttons
+                    # Styling for the buttons (all classes)
+                    button_style = """
+                        <style>
+                            .class-button {
+                                padding: 10px;
+                                width: 120px;  /* Fixed width */
+                                height: 50px;  /* Fixed height */
+                                border-radius: 10px;
+                                box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+                                margin: 5px;
+                                text-align: center;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+                            .highlighted {
+                                background-color: #E8F9EE; /* Color for the predicted class */
+                            }
+                            .regular {
+                                background-color: #FFFFFF; /* Default color for other classes */
+                            }
+                        </style>
+                    """
+                    st.markdown(button_style, unsafe_allow_html=True)
+
+                    # Display 5 classes and highlight the predicted one
                     st.write("Classification Results:")
 
                     classes = [
-                        "Class 0: Normal:The heart beats in a normal rhythm without arrhythmias.", 
-                        "Class 1: Supraventricular:Abnormal fast rhythms originating above the heart’s ventricles.", 
-                        "Class 2: Ventricular:Irregular heartbeats that start in the lower chambers of the heart (ventricles)", 
-                        "Class 3: Fusion Beat :A fusion of two heartbeats, one from normal rhythm and one from an ectopic source.",
-                        "Class 4: Unclassifiable Beats:Beats that cannot be classified into the known categories."  # Updated class name
+                        "Class 0: Normal", 
+                        "Class 1: Supraventricular", 
+                        "Class 2: Ventricular", 
+                        "Class 3: Fusion",
+                        "Class 4: Unknown"
                     ]
                     descriptions = [
-                        "Normal beat detected.",
-                        "Supraventricular Arrhythmia detected.",
-                        "Ventricular Arrhythmia detected.",
-                        "Fusion Beat detected.",
-                        "Unclassifiable beat detected."
+                        "Normal sinus rhythm: The heart beats in a normal rhythm without arrhythmias.",
+                        "Supraventricular Arrhythmia: Abnormal fast rhythms originating above the heart’s ventricles.",
+                        "Ventricular Arrhythmia: Irregular heartbeats that start in the lower chambers of the heart (ventricles).",
+                        "Fusion Beat: A fusion of two heartbeats, one from normal rhythm and one from an ectopic source.",
+                        "Unclassifiable Beats: Beats that cannot be classified into the known categories, possibly due to noise or unknown abnormalities."
                     ]
 
+                    # Displaying the classes with styling
                     cols = st.columns(5)
-
                     for i, col in enumerate(cols):
-                        # Add hover effect using markdown
                         if i == predicted_class:
-                            col.markdown(f"""
-                                <button style='padding: 10px; width: 100%; background-color: lightgreen; 
-                                border-radius: 5px; cursor: pointer;' title='{descriptions[i]}'>
-                                {classes[i]}
-                                </button>
-                                """, unsafe_allow_html=True)
+                            col.markdown(
+                                f"<div class='class-button highlighted' title='{descriptions[i]}'>{classes[i]}</div>", 
+                                unsafe_allow_html=True
+                            )
                         else:
-                            col.markdown(f"""
-                                <button style='padding: 10px; width: 100%; background-color: #FAF9F6; 
-                                border-radius: 5px; cursor: pointer;' title='{descriptions[i]}'>
-                                {classes[i]}
-                                </button>
-                                """, unsafe_allow_html=True)
+                            col.markdown(
+                                f"<div class='class-button regular' title='{descriptions[i]}'>{classes[i]}</div>", 
+                                unsafe_allow_html=True
+                            )
+
+                    # Add space between the buttons and the subheader
+                    st.markdown("<br><br>", unsafe_allow_html=True)  # Adds gap
+
+                    # Display the class number and description inside a styled box
+                    st.markdown(f"""
+                        <div style="border: 2px solid #E8F9EE; border-radius: 10px; padding: 10px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); background-color: #E8F9EE;">
+                            <h5 style="margin-bottom: 5px;">Predicted Class {predicted_class} :</h5>
+                            <p>{descriptions[predicted_class]}</p>
+                        </div>
+                    """, unsafe_allow_html=True)
 
         except Exception as e:
             st.error(f"Error reading the file: {e}")

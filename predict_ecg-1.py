@@ -71,13 +71,26 @@ def ecg_classification_page():
 
     if uploaded_file is not None:
         try:
+            # Debugging: Check if file is being read
+            st.write("File successfully uploaded. Processing...")
+
             # Read the uploaded CSV file without a header
             data = pd.read_csv(uploaded_file, header=None)
 
+            # Debugging: Show data dimensions
+            st.write(f"File shape: {data.shape}")
+
             # Flatten data to a 1D array
+            input_data = None
+
+            # Check the shape and adjust if necessary
             if data.shape[1] == 187:
                 st.success("File successfully uploaded and contains 187 values in a single row.")
                 input_data = data.values.flatten()
+
+            elif data.shape[1] == 188:
+                st.warning("File contains 188 values, trimming the last value to fit the expected 187 values.")
+                input_data = data.values.flatten()[:187]
 
             elif data.shape[0] == 187 and data.shape[1] == 1:
                 st.success("File successfully uploaded and contains 187 values in a single column.")
@@ -87,10 +100,7 @@ def ecg_classification_page():
                 input_data = data.iloc[0, 0].split(',')
                 input_data = list(map(float, input_data))
 
-            else:
-                st.error(f"Uploaded file has {data.shape[1]} columns and {data.shape[0]} rows. Only data with exactly 187 values is acceptable.")
-                input_data = None
-
+            # Handle cases where more than or fewer than 187 values are present
             if input_data is not None:
                 if len(input_data) > 187:
                     st.warning(f"Uploaded file contains {len(input_data)} values. Trimming to 187 values.")
@@ -193,6 +203,7 @@ def ecg_classification_page():
 
         except Exception as e:
             st.error(f"Error reading the file: {e}")
+            st.write(e)
 
 # Run the login page
 login_page()

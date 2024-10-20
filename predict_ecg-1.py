@@ -6,7 +6,6 @@ import pandas as pd
 from pymongo import MongoClient
 import bcrypt
 import time
-
 client = MongoClient("mongodb+srv://Mandar_Wagh:mandar%401107@ecg-users.i4kje.mongodb.net/?retryWrites=true&w=majority")
 db = client.ecg_users
 users_collection = db.users

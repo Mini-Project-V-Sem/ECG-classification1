@@ -5,61 +5,7 @@ from tensorflow.keras.models import load_model
 import pandas as pd
 from pymongo import MongoClient
 import bcrypt
-import time  # Import time for simulating loading
 
-# Updated theme with cooler tones of white
-st.markdown("""
-    <style>
-    /* Apply black background to the main body */
-    body {
-        background-color: #000000;
-        color: #ecf0f1;  /* Light text color */
-    }
-
-    /* Set black background and light text for the Streamlit app */
-    .stApp {
-        background-color: #000000;
-        color: #ecf0f1;
-    }
-
-    /* Customize buttons with a dark tone */
-    .stButton>button {
-        background-color: #2c3e50;  /* Dark tone */
-        color: #ecf0f1;
-    }
-
-    /* Change the color of text inputs */
-    .stTextInput>div>input {
-        background-color: #2c3e50;  /* Dark background for inputs */
-        color: #ecf0f1;
-    }
-
-    /* Style selectbox */
-    .stSelectbox>div>div>input {
-        background-color: #2c3e50;
-        color: #ecf0f1;
-    }
-
-    /* Change file uploader background and text color */
-    .stFileUploader>div {
-        background-color: #2c3e50;
-        color: #ecf0f1;
-    }
-
-    /* Customize the progress bar */
-    .stProgress>div>div {
-        background-color: #34495e;  /* Dark tone */
-    }
-
-    /* Style the success message background */
-    .stAlert {
-        background-color: #34495e;  /* Dark gray */
-        color: #ecf0f1;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-# Connect to MongoDB
 client = MongoClient("mongodb+srv://Mandar_Wagh:mandar%401107@ecg-users.i4kje.mongodb.net/?retryWrites=true&w=majority")
 db = client.ecg_users
 users_collection = db.users
@@ -165,7 +111,6 @@ def ecg_classification_page():
                         progress_bar.progress(percent_complete + 1)
                         status_text.text(f"Processing... {percent_complete + 1}% complete")
 
-                    # After loading is completed, perform the prediction
                     # Normalize input data
                     input_data = np.array(input_data, dtype=float)
                     input_data_normalized = input_data / np.max(np.abs(input_data))
@@ -177,6 +122,74 @@ def ecg_classification_page():
 
                     # Show predicted class only after progress is fully completed
                     st.success(f"Predicted class: {predicted_class}")
+
+                    # Styling for the buttons (all classes)
+                    button_style = """
+                        <style>
+                            .class-button {
+                                padding: 10px;
+                                width: 120px;  /* Fixed width */
+                                height: 50px;  /* Fixed height */
+                                border-radius: 10px;
+                                box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+                                margin: 5px;
+                                text-align: center;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+                            .highlighted {
+                                background-color: #E8F9EE; /* Color for the predicted class */
+                            }
+                            .regular {
+                                background-color: #FFFFFF; /* Default color for other classes */
+                            }
+                        </style>
+                    """
+                    st.markdown(button_style, unsafe_allow_html=True)
+
+                    # Display 5 classes and highlight the predicted one
+                    st.write("Classification Results:")
+
+                    classes = [
+                        "Class 0: Normal", 
+                        "Class 1: Supraventricular", 
+                        "Class 2: Ventricular", 
+                        "Class 3: Fusion",
+                        "Class 4: Unknown"
+                    ]
+                    descriptions = [
+                        "Normal sinus rhythm: The heart beats in a normal rhythm without arrhythmias.",
+                        "Supraventricular Arrhythmia: Abnormal fast rhythms originating above the heart’s ventricles.",
+                        "Ventricular Arrhythmia: Irregular heartbeats that start in the lower chambers of the heart (ventricles).",
+                        "Fusion Beat: A fusion of two heartbeats, one from normal rhythm and one from an ectopic source.",
+                        "Unclassifiable Beats: Beats that cannot be classified into the known categories, possibly due to noise or unknown abnormalities."
+                    ]
+
+                    # Displaying the classes with styling
+                    cols = st.columns(5)
+                    for i, col in enumerate(cols):
+                        if i == predicted_class:
+                            col.markdown(
+                                f"<div class='class-button highlighted' title='{descriptions[i]}'>{classes[i]}</div>", 
+                                unsafe_allow_html=True
+                            )
+                        else:
+                            col.markdown(
+                                f"<div class='class-button regular' title='{descriptions[i]}'>{classes[i]}</div>", 
+                                unsafe_allow_html=True
+                            )
+
+                    # Add space between the buttons and the subheader
+                    st.markdown("<br><br>", unsafe_allow_html=True)  # Adds gap
+
+                    # Display the class number and description inside a styled box
+                    st.markdown(f"""
+                        <div style="border: 2px solid #E8F9EE; border-radius: 10px; padding: 10px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); background-color: #E8F9EE;">
+                            <h5 style="margin-bottom: 5px;">Predicted Class {predicted_class} :</h5>
+                            <p>{descriptions[predicted_class]}</p>
+                        </div>
+                    """, unsafe_allow_html=True)
 
         except Exception as e:
             st.error(f"Error reading the file: {e}")

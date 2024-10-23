@@ -8,7 +8,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install the Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirement.txt
 
 # Copy the current directory contents into the container at /app
 COPY . .

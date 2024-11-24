@@ -85,7 +85,7 @@ streamlit run predict_ecg-1.py
 
 ## Research Paper
 
-### [Deep Learning for the Heart: ECG Analysis and Arrhythmia Detection]
+### [Deep Learning for the Heart: ECG Analysis and Arrhythmia Detection](https://github.com/Mini-Project-V-Sem/ECG-classification/blob/samruddhi/Deep%20Learning%20for%20the%20Heart%20ECG%20Analysis%20and%20Arrhythmia%20Detection.pdf)
 - **Authors**: Samruddhi, Aarya, Sakshi, Bhumi, Mandar
 - **Project**: ECG Classification and Arrhythmia Detection
 - **Abstract**: 

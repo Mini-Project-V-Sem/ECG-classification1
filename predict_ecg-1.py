@@ -20,9 +20,27 @@ from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer,Table, Image,TableStyle
 from reportlab.lib.units import inch
 from reportlab.lib import colors
+import requests
+from streamlit_lottie import st_lottie
+from streamlit_lottie import st_lottie_spinner
 
 # Set page config
 st.set_page_config(page_title="ECG Heartbeat Classifier", page_icon="❤️", layout="wide")
+
+def load_lottieurl(url: str):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
+
+lottie_url_hello = "https://lottie.host/a8adf41c-15c6-462a-9462-0776c9ea7522/0u2xKRXTS4.json"
+lottie_url_download = "https://assets4.lottiefiles.com/private_files/lf30_t26law.json"
+lottie_hello = load_lottieurl(lottie_url_hello)
+lottie_download = load_lottieurl(lottie_url_download)
+
+
+st_lottie(lottie_hello, key="hello")
+
 
 # Custom CSS
 st.markdown("""

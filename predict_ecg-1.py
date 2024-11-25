@@ -188,7 +188,7 @@ def generate_pdf_report(predicted_class, classes, descriptions, input_data, conf
         # Patient Information
         story.append(Paragraph("Patient Information", styles['SectionHeader']))
         patient_data = [
-            ["Patient Name:", username if username else "Anonymous"],
+            ["Patient Name:", username if username else "Mandar Wagh"],
             ["Date:", datetime.now().strftime("%Y-%m-%d")],
             ["Time:", datetime.now().strftime("%H:%M:%S")]
         ]
